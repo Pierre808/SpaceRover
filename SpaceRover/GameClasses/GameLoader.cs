@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +15,7 @@ namespace SpaceRover.GameClasses
     internal class GameLoader
     {
         Canvas Canvas;
+        GameObject GameScreen;
 
         SolidColorBrush MainBackgrkoundColor = Brushes.Beige;
 
@@ -34,19 +37,24 @@ namespace SpaceRover.GameClasses
         {
             Console.WriteLine(this.Canvas.ActualWidth);
 
-            var obj = new GameObject(Vector2.Zero(), new Vector2(this.Canvas.ActualWidth, this.Canvas.ActualHeight), new BitmapImage(new Uri("C:/Users/pierr/Downloads/space-rover-cube.png")));
+            //initialize GameScreen
+            double gameScreenSize = 0;
 
-            var img = obj.RenderImage();
+            if(this.Canvas.ActualWidth > this.Canvas.ActualHeight)
+            {
+                //if width is larger than height -> take 8/10 of screen height as size
+                gameScreenSize = this.Canvas.ActualHeight / 10 * 8;
+            }
+            else
+            {
+                gameScreenSize = this.Canvas.ActualWidth / 10 * 8;
+            }
 
+            string uri = RessourceManager.WriteResourceToTempFile("black.png");
 
-            Canvas.SetTop(img, obj.Position.Y);
-            Canvas.SetLeft(img, obj.Position.X);
+            Console.Write("uri: " + uri);
 
-            this.Canvas.Children.Add(img);
-
-
-            Console.WriteLine(obj.Size.Y);
-            Console.WriteLine(img.ActualWidth);
+            this.GameScreen = new GameObject(Vector2.Zero(), new Vector2(gameScreenSize, gameScreenSize), new BitmapImage(new Uri(uri)));
         }
 
         /// <summary>

@@ -15,11 +15,11 @@ namespace SpaceRover.GameClasses
         public Vector2 Size;
         public BitmapSource Bitmap;
 
-        public GameObject(Vector2 position, Vector2 size, BitmapSource imageBitmap)
+        public GameObject(Vector2 position, Vector2 size, BitmapSource bitmap)
         {
             this.Position = position;
             this.Size = size;
-            this.Bitmap = imageBitmap;
+            this.Bitmap = bitmap;
         }
 
         //public GameObject(Vector2 position, Vector2 size, SolidColorBrush color)
