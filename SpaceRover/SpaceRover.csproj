@@ -8,7 +8,12 @@
   </PropertyGroup>
 
     <ItemGroup>
-	    <None Include="imgs/*.png" Pack="true" PackagePath="\" />
+      <None Remove="imgs\*.png" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="imgs\*.png" />
+    </ItemGroup>
+
 
 </Project>

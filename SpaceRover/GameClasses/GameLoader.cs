@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -50,11 +51,9 @@ namespace SpaceRover.GameClasses
                 gameScreenSize = this.Canvas.ActualWidth / 10 * 8;
             }
 
-            string uri = RessourceManager.WriteResourceToTempFile("black.png");
+            var uri = new BitmapImage(RessourceManager.GetImageRessourceUri("black.png"));
 
-            Console.Write("uri: " + uri);
-
-            this.GameScreen = new GameObject(Vector2.Zero(), new Vector2(gameScreenSize, gameScreenSize), new BitmapImage(new Uri(uri)));
+            this.GameScreen = new GameObject(Vector2.Zero(), new Vector2(gameScreenSize, gameScreenSize), new BitmapImage(RessourceManager.GetImageRessourceUri("space-rover-tile.png")));
         }
 
         /// <summary>
