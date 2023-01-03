@@ -75,7 +75,7 @@ namespace SpaceRover.GameClasses
             }
             else
             {
-                var size = this.GameScreen.SetHeightRelativeToCanvas(this.Canvas, 0.8);
+                var size = this.GameScreen.SetWidthRelativeToCanvas(this.Canvas, 0.8);
                 this.GameScreen.SetHeight(size);
 
                 this.GameScreen.SetPosY((this.Canvas.ActualHeight - this.GameScreen.Size.Y) / 2);
