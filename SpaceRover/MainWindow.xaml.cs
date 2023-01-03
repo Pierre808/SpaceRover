@@ -30,13 +30,6 @@ namespace SpaceRover
             this.GameLoader = new GameLoader(Canvas);
 
             this.GameLoader.InitializeCanvas();
-
-            this.SizeChanged += new SizeChangedEventHandler(resizeCanvas);
-        }
-
-        private void resizeCanvas(object sender, SizeChangedEventArgs e)
-        {
-            this.GameLoader.resizeCanvas();
         }
     }
 }

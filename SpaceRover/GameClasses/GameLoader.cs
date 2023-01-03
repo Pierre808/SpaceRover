@@ -32,6 +32,7 @@ namespace SpaceRover.GameClasses
         {
             Canvas.Background = MainBackgrkoundColor;
             Canvas.Loaded += new System.Windows.RoutedEventHandler(loadedCanvas);
+            Canvas.SizeChanged += new SizeChangedEventHandler(ResizeCanvas);
         }
 
         private void loadedCanvas(object sender, RoutedEventArgs e)
@@ -39,29 +40,53 @@ namespace SpaceRover.GameClasses
             Console.WriteLine(this.Canvas.ActualWidth);
 
             //initialize GameScreen
-            double gameScreenSize = 0;
-
-            if(this.Canvas.ActualWidth > this.Canvas.ActualHeight)
-            {
-                //if width is larger than height -> take 8/10 of screen height as size
-                gameScreenSize = this.Canvas.ActualHeight / 10 * 8;
-            }
-            else
-            {
-                gameScreenSize = this.Canvas.ActualWidth / 10 * 8;
-            }
-
-            var uri = new BitmapImage(RessourceManager.GetImageRessourceUri("black.png"));
-
-            this.GameScreen = new GameObject(Vector2.Zero(), new Vector2(gameScreenSize, gameScreenSize), new BitmapImage(RessourceManager.GetImageRessourceUri("space-rover-tile.png")));
+            SetGameScreenAttributes();
+            this.Canvas.Children.Add(this.GameScreen.RenderImage());
         }
 
         /// <summary>
         /// Reset size and position of elements on the canvas
         /// </summary>
-        public void resizeCanvas()
+        public void ResizeCanvas(object sender, SizeChangedEventArgs e)
         {
-            
+            SetGameScreenAttributes();
+        }
+
+        /// <summary>
+        /// Sets position, size etc. of GameScreen on canvas according to the values of this.GameScreen
+        /// </summary>
+        private void SetGameScreenAttributes()
+        {
+            //initialize if not already
+            if (this.GameScreen == null)
+            {
+                this.GameScreen = new GameObject(Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("space-rover-tile.png")));
+            }
+
+            //set height, width and position relative to Canvas
+            if (this.Canvas.ActualWidth > this.Canvas.ActualHeight)
+            {
+                //if width is larger than height -> take 80% of screen height as size
+                var size = this.GameScreen.SetHeightRelativeToCanvas(this.Canvas, 0.8);
+                this.GameScreen.SetWidth(size);
+
+                this.GameScreen.SetPosYRelativeToCanvas(this.Canvas, 0.1);
+                this.GameScreen.SetPosX((this.Canvas.ActualWidth - this.GameScreen.Size.X) / 2);
+            }
+            else
+            {
+                var size = this.GameScreen.SetHeightRelativeToCanvas(this.Canvas, 0.8);
+                this.GameScreen.SetHeight(size);
+
+                this.GameScreen.SetPosY((this.Canvas.ActualHeight - this.GameScreen.Size.Y) / 2);
+                this.GameScreen.SetPosXRelativeToCanvas(this.Canvas, 0.1);
+            }
+
+            //add to Canvas
+            var gameScreenImage = this.GameScreen.RenderImage();
+
+            Canvas.SetTop(gameScreenImage, this.GameScreen.Position.Y);
+            Canvas.SetLeft(gameScreenImage, this.GameScreen.Position.X);
         }
     }
 }
