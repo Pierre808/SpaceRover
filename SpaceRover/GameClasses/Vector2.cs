@@ -47,5 +47,53 @@ namespace SpaceRover.GameClasses
             this.X -= vector2.X;
             this.Y -= vector2.Y;
         }
+
+        public void Divide(Vector2 vector2)
+        {
+            this.X = this.X/ vector2.X;
+            this.Y = this.Y/ vector2.Y;
+        }
+
+        public void Multiply(Vector2 vector2)
+        {
+            this.X = this.X * vector2.X;
+            this.Y = this.Y * vector2.Y;
+        }
+        public Vector2 ReturnAdd(Vector2 vector2)
+        {
+            return new Vector2(this.X + vector2.X, this.Y + vector2.Y);
+        }
+
+
+        public Vector2 ReturnRemove(Vector2 vector2)
+        {
+            return new Vector2(this.X - vector2.X, this.Y - vector2.Y);
+        }
+
+        public Vector2 ReturnDivide(Vector2 vector2)
+        {
+            return new Vector2(this.X / vector2.X, this.Y / vector2.Y);
+        }
+
+        public Vector2 ReturnMultiply(Vector2 vector2)
+        {
+            return new Vector2(this.X * vector2.X, this.Y * vector2.Y);
+        }
+
+        /// <summary>
+        /// Checks if Vectors X and Y equals 0
+        /// </summary>
+        /// <returns>
+        /// True if Vectors X and Y are 0, else false
+        /// </returns>
+        public bool IsZero()
+        {
+            if(this.X == 0 && this.Y == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

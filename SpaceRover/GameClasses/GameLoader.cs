@@ -18,10 +18,6 @@ namespace SpaceRover.GameClasses
         GameHandler GameHandler;
         GameObject GameScreen;
 
-        /// <summary>
-        /// space-rover-tile.png
-        /// </summary>
-        GameObject[,]GameTiles;
         Vector2 GameTilesAmount;
 
         public GameLoader(GameHandler gameHandler)
@@ -51,12 +47,11 @@ namespace SpaceRover.GameClasses
 
             this.GameHandler.Canvas.Children.Add(this.GameScreen.RenderImage());
 
-            for(int i = 0; i < GameTilesAmount.X; i++)
+            foreach(var child in this.GameScreen.GetChilds())
             {
-                for(int j = 0; j < GameTilesAmount.Y; j++)
-                {
-                    this.GameHandler.Canvas.Children.Add(this.GameTiles[i, j].RenderImage());
-                }
+                var img = child.RenderImage();
+
+                this.GameHandler.Canvas.Children.Add(img);
             }
         }
 
@@ -97,19 +92,33 @@ namespace SpaceRover.GameClasses
             }
 
             //add GameTiles
-            for (int i = 0; i < this.GameTilesAmount.X; i++)
+            if (this.GameScreen.GetChilds().Count == 0)
             {
-                for (int j = 0; j < this.GameTilesAmount.Y; j++)
+                for (int i = 0; i < this.GameTilesAmount.X; i++)
                 {
-                    this.GameTiles[i, j].SetPosY((size / this.GameTilesAmount.Y * j) + this.GameScreen.Position.Y);
-                    this.GameTiles[i, j].SetPosX((size / this.GameTilesAmount.X * i) + this.GameScreen.Position.X);
-                    this.GameTiles[i, j].SetHeight(size / this.GameTilesAmount.Y);
-                    this.GameTiles[i, j].SetWidth(size / this.GameTilesAmount.X);
+                    for(int j = 0; j < this.GameTilesAmount.Y; j++)
+                    {
+                        var tile = new GameObject(Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("space-rover-tile.png")));
+                        tile.SetPosX(size / this.GameTilesAmount.X * i);
+                        tile.SetPosY(size / this.GameTilesAmount.Y * j);
+                        tile.SetHeight(size / this.GameTilesAmount.Y);
+                        tile.SetWidth(size / this.GameTilesAmount.X);
 
-                    var tileImage = this.GameTiles[i, j].RenderImage();
-                    Canvas.SetTop(tileImage, this.GameTiles[i, j].Position.Y);
-                    Canvas.SetLeft(tileImage, this.GameTiles[i, j].Position.X);
+                        this.GameScreen.AddChild(tile);
+                    }
                 }
+            }
+            else
+            {
+                this.GameScreen.ResetChildsOnCanvas();
+            }
+
+            foreach(var child in this.GameScreen.GetChilds())
+            {
+                var tileImage = child.RenderImage();
+
+                Canvas.SetTop(tileImage, child.Position.Y);
+                Canvas.SetLeft(tileImage, child.Position.X);
             }
 
 
@@ -135,19 +144,7 @@ namespace SpaceRover.GameClasses
                 this.GameTilesAmount = new Vector2(8, 8);
             }
 
-            if (this.GameTiles == null)
-            {
-
-                this.GameTiles = new GameObject[(int)this.GameTilesAmount.X, (int)this.GameTilesAmount.Y];
-
-                for (int i = 0; i < this.GameTilesAmount.X; i++)
-                {
-                    for (int j = 0; j < this.GameTilesAmount.Y; j++)
-                    {
-                        this.GameTiles[i, j] = new GameObject(Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("space-rover-tile.png")));
-                    }
-                }
-            }
+            
         }
     }
 }
