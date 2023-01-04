@@ -1,51 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows;
+using System.Windows.Media;
 
 namespace SpaceRover.GameClasses
 {
+    /// <summary>
+    /// Implementation of own game methods 
+    /// </summary>
     internal class GameLoader
     {
-        Canvas Canvas;
+        GameHandler GameHandler;
         GameObject GameScreen;
 
-        SolidColorBrush MainBackgrkoundColor = Brushes.Beige;
-
-        public GameLoader(Canvas canvas)
+        public GameLoader(GameHandler gameHandler)
         {
-            this.Canvas = canvas;
+            this.GameHandler = gameHandler;
+
+            InitializeMethods(); 
         }
 
         /// <summary>
-        /// Set MainCanvas Attributes for the first time
+        /// sets methods for loaded and resize
         /// </summary>
-        public void InitializeCanvas()
+        private void InitializeMethods()
         {
-            Canvas.Background = MainBackgrkoundColor;
-            Canvas.Loaded += new System.Windows.RoutedEventHandler(loadedCanvas);
-            Canvas.SizeChanged += new SizeChangedEventHandler(ResizeCanvas);
+            this.GameHandler.CanvasLoaded += new RoutedEventHandler(loadedCanvas);
+            this.GameHandler.CanvasResize += new SizeChangedEventHandler(ResizeCanvas);
         }
 
+        /// <summary>
+        /// runs when canvas is loaded
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void loadedCanvas(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.Canvas.ActualWidth);
-
-            //initialize GameScreen
             SetGameScreenAttributes();
-            this.Canvas.Children.Add(this.GameScreen.RenderImage());
+
+            this.GameHandler.Canvas.Children.Add(this.GameScreen.RenderImage());
         }
 
         /// <summary>
-        /// Reset size and position of elements on the canvas
+        /// runs when canvas is resized (window resize) 
         /// </summary>
         public void ResizeCanvas(object sender, SizeChangedEventArgs e)
         {
@@ -57,29 +59,30 @@ namespace SpaceRover.GameClasses
         /// </summary>
         private void SetGameScreenAttributes()
         {
-            //initialize if not already
+            //initialize GameScreen if not already
             if (this.GameScreen == null)
             {
-                this.GameScreen = new GameObject(Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("space-rover-tile.png")));
+                this.GameScreen = new GameObject(Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("black.png")));
             }
 
+
             //set height, width and position relative to Canvas
-            if (this.Canvas.ActualWidth > this.Canvas.ActualHeight)
+            if (this.GameHandler.Canvas.ActualWidth > this.GameHandler.Canvas.ActualHeight)
             {
                 //if width is larger than height -> take 80% of screen height as size
-                var size = this.GameScreen.SetHeightRelativeToCanvas(this.Canvas, 0.8);
+                var size = this.GameScreen.SetHeightRelativeToCanvas(this.GameHandler.Canvas, 0.8);
                 this.GameScreen.SetWidth(size);
 
-                this.GameScreen.SetPosYRelativeToCanvas(this.Canvas, 0.1);
-                this.GameScreen.SetPosX((this.Canvas.ActualWidth - this.GameScreen.Size.X) / 2);
+                this.GameScreen.SetPosYRelativeToCanvas(this.GameHandler.Canvas, 0.1);
+                this.GameScreen.SetPosX((this.GameHandler.Canvas.ActualWidth - this.GameScreen.Size.X) / 2);
             }
             else
             {
-                var size = this.GameScreen.SetWidthRelativeToCanvas(this.Canvas, 0.8);
+                var size = this.GameScreen.SetWidthRelativeToCanvas(this.GameHandler.Canvas, 0.8);
                 this.GameScreen.SetHeight(size);
 
-                this.GameScreen.SetPosY((this.Canvas.ActualHeight - this.GameScreen.Size.Y) / 2);
-                this.GameScreen.SetPosXRelativeToCanvas(this.Canvas, 0.1);
+                this.GameScreen.SetPosY((this.GameHandler.Canvas.ActualHeight - this.GameScreen.Size.Y) / 2);
+                this.GameScreen.SetPosXRelativeToCanvas(this.GameHandler.Canvas, 0.1);
             }
 
             //add to Canvas

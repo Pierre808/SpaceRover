@@ -21,15 +21,15 @@ namespace SpaceRover
     /// </summary>
     public partial class MainWindow : Window
     {
+        GameHandler GameHandler;
         GameLoader GameLoader;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            this.GameLoader = new GameLoader(Canvas);
-
-            this.GameLoader.InitializeCanvas();
+            this.GameHandler = new GameHandler(Canvas);
+            this.GameLoader = new GameLoader(this.GameHandler);
         }
     }
 }
