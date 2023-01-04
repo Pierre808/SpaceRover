@@ -36,5 +36,16 @@ namespace SpaceRover.GameClasses
         {
             return new Vector2(1, 1);
         }
+
+        public void Add(Vector2 vector2)
+        {
+            this.X += vector2.X;
+            this.Y += vector2.Y;
+        }
+        public void Remove(Vector2 vector2)
+        {
+            this.X -= vector2.X;
+            this.Y -= vector2.Y;
+        }
     }
 }
