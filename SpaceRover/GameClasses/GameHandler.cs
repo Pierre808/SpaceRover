@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -74,6 +75,8 @@ namespace SpaceRover.GameClasses
             this.SetBackground(this.MainBackgrkoundColor);
             Canvas.Loaded += new System.Windows.RoutedEventHandler(OnCanvasLoaded);
             Canvas.SizeChanged += new SizeChangedEventHandler(OnCanvasResize);
+
+            Canvas.Loaded += (s, e) => Keyboard.Focus(this.Canvas);
         }
 
         /// <summary>

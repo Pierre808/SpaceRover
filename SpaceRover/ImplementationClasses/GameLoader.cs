@@ -18,6 +18,7 @@ namespace SpaceRover.ImplementationClasses
     {
         GameHandler GameHandler;
         GameObject GameScreen;
+        StaticMovingGameObject Player;
 
         Vector2 GameTilesAmount;
 
@@ -84,7 +85,7 @@ namespace SpaceRover.ImplementationClasses
             }
 
             //add GameTiles
-            if (GameScreen.GetChilds().Count == 0)
+            if (GameScreen.GetChilds().FindIndex(x => x.GetTag().Equals("GameScreenTile")) == -1)
             {
                 for (int i = 0; i < GameTilesAmount.X; i++)
                 {
@@ -96,10 +97,26 @@ namespace SpaceRover.ImplementationClasses
                         tile.SetHeight(size / GameTilesAmount.Y);
                         tile.SetWidth(size / GameTilesAmount.X);
 
+                        tile.SetZindex(1);
+
                         GameScreen.AddChild(tile);
                     }
                 }
             }
+
+            //player
+
+            if (GameScreen.GetChilds().FindIndex(x => x.GetTag().Equals("Player")) == -1)
+            {
+                var playerVector = new Vector2(size / this.GameTilesAmount.X, size / this.GameTilesAmount.Y);
+
+                this.Player.SetSize(playerVector);
+                this.Player.SetMovement(playerVector);
+                this.Player.SetZindex(100);
+
+                this.GameScreen.AddChild(this.Player);
+            }
+
 
             //render
             this.GameScreen.RenderImage();
@@ -112,7 +129,8 @@ namespace SpaceRover.ImplementationClasses
         {
             if (GameScreen == null)
             {
-                GameScreen = new GameObject(Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("black.png")), "GameScreen", this.GameHandler);
+                GameScreen = new GameObject(
+                    Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("black.png")), "GameScreen", this.GameHandler);
             }
 
             if (GameTilesAmount == null)
@@ -120,7 +138,11 @@ namespace SpaceRover.ImplementationClasses
                 GameTilesAmount = new Vector2(8, 8);
             }
 
-
+            if(this.Player == null)
+            {
+                this.Player = new StaticMovingGameObject(
+                    Vector2.Zero(), Vector2.Zero(), new BitmapImage(RessourceManager.GetImageRessourceUri("space-rover-ufo.png")), "Player", this.GameHandler, Vector2.Zero());
+            }
         }
     }
 }

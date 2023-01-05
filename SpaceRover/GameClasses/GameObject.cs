@@ -15,6 +15,7 @@ namespace SpaceRover.GameClasses
         private Vector2 Size;
         private BitmapSource Bitmap;
         string Tag;
+        int Zindex;
 
         private Image Image;
 
@@ -35,6 +36,7 @@ namespace SpaceRover.GameClasses
             this.Size = size;
             this.Bitmap = bitmap;
             this.Tag = tag;
+            this.Zindex = 0;
 
             this.Image = new Image();
 
@@ -70,6 +72,7 @@ namespace SpaceRover.GameClasses
             //set on Canvas
             Canvas.SetTop(this.Image ,this.Position.Y);
             Canvas.SetLeft(this.Image ,this.Position.X);
+            Canvas.SetZIndex(this.Image ,this.Zindex);
 
             this.ResetChildsOnCanvas();
         }
@@ -293,7 +296,49 @@ namespace SpaceRover.GameClasses
             return posY;
         }
 
+        /// <summary>
+        /// Get GameObject tag
+        /// </summary>
+        /// <returns>
+        /// Tag of this GameObject
+        /// </returns>
+        public string GetTag()
+        {
+            return this.Tag;
+        }
 
+        /// <summary>
+        /// Sets tag
+        /// </summary>
+        /// <param name="tag">
+        /// Tag value
+        /// </param>
+        public void SetTag(string tag)
+        {
+            this.Tag = tag;
+        }
+
+        /// <summary>
+        /// Sets value for Zindex
+        /// </summary>
+        /// <param name="zindex">
+        /// New Zindex value
+        /// </param>
+        public void SetZindex(int zindex)
+        {
+            this.Zindex = zindex;
+        }
+
+        /// <summary>
+        /// Gets Zindex value
+        /// </summary>
+        /// <returns>
+        /// Zindex value
+        /// </returns>
+        public int GetZindex()
+        {
+            return this.Zindex;
+        }
 
 
 

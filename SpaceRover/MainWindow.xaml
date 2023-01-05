@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SpaceRover"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" MinHeight="200" MinWidth="200">
-    <Canvas x:Name="Canvas">
+    <Canvas x:Name="Canvas" Focusable="True">
 
     </Canvas>
 </Window>
