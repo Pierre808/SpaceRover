@@ -21,17 +21,21 @@ namespace SpaceRover.GameClasses
         /// <summary>
         /// Application main canvas
         /// </summary>
-        public Canvas Canvas;
+        public Canvas Canvas { get; private set; }
 
         /// <summary>
         /// Application main backgroundcolor
         /// </summary>
         SolidColorBrush MainBackgrkoundColor = Brushes.Beige;
 
+        List<GameObject> LoadedGameObjects;
+
 
         public GameHandler(Canvas canvas)
         {
             this.Canvas = canvas;
+
+            this.LoadedGameObjects = new List<GameObject>();
 
             this.Start();
         }
@@ -55,6 +59,14 @@ namespace SpaceRover.GameClasses
         }
 
         /// <summary>
+        /// Start method that runs all necessary methods
+        /// </summary>
+        private void Start()
+        {
+            InitializeCanvas();
+        }
+
+        /// <summary>
         /// Set Canvas Attributes for the first time
         /// </summary>
         private void InitializeCanvas()
@@ -62,15 +74,6 @@ namespace SpaceRover.GameClasses
             this.SetBackground(this.MainBackgrkoundColor);
             Canvas.Loaded += new System.Windows.RoutedEventHandler(OnCanvasLoaded);
             Canvas.SizeChanged += new SizeChangedEventHandler(OnCanvasResize);
-        }
-
-
-        /// <summary>
-        /// Start method that runs all necessary methods
-        /// </summary>
-        private void Start()
-        {
-            InitializeCanvas();
         }
 
         /// <summary>
@@ -84,5 +87,19 @@ namespace SpaceRover.GameClasses
             Canvas.Background = this.MainBackgrkoundColor;
         }
 
+        public List<GameObject> GetLoadedGameObjects()
+        {
+            return this.LoadedGameObjects;
+        }
+
+        public void AddLoadedGameObject(GameObject gameObject)
+        {
+            this.LoadedGameObjects.Add(gameObject);
+        }
+
+        public void RemoveLoadedGameObject(GameObject gameObject)
+        {
+            this.LoadedGameObjects.Remove(gameObject);
+        }
     }
 }

@@ -11,60 +11,72 @@ namespace SpaceRover.GameClasses
 {
     internal class GameObject
     {
-        public Vector2 Position;
-        public Vector2 Size;
-        public BitmapSource Bitmap;
+        private Vector2 Position;
+        private Vector2 Size;
+        private BitmapSource Bitmap;
+        string Tag;
 
         private Image Image;
 
         private List<GameObject> Childs;
 
+        private GameHandler GameHandler;
+
         /// <summary>
+        /// Helper for childs resizing and repositioning
         /// will be changed on resize / repositioning
         /// </summary>
         private Vector2 oldPos = Vector2.Zero();
         private Vector2 oldSize = Vector2.Zero();
         
-        public GameObject(Vector2 position, Vector2 size, BitmapSource bitmap)
+        public GameObject(Vector2 position, Vector2 size, BitmapSource bitmap, string tag, GameHandler gameHandler)
         {
             this.Position = position;
             this.Size = size;
             this.Bitmap = bitmap;
+            this.Tag = tag;
+
+            this.Image = new Image();
 
             this.Childs = new List<GameObject>();
+
+            this.GameHandler = gameHandler;
+
+
+            //add to GameHandler if not already
+            if (!this.GameHandler.GetLoadedGameObjects().Contains(this))
+            {
+                this.GameHandler.AddLoadedGameObject(this);
+
+                this.GameHandler.Canvas.Children.Add(this.Image);
+            }
         }
 
-        //public GameObject(Vector2 position, Vector2 size, SolidColorBrush color)
-        //{
-        //    this.Position = position;
-        //    this.Size = size;
-           
-        //    //TODO: color 
-        //}
+        public GameObject(Vector2 position, Vector2 size, BitmapSource bitmap, GameHandler gameHandler) 
+            :this(position, size, bitmap, "New GameObject", gameHandler)
+        {
+        }
 
         /// <summary>
-        /// Initializes an Image object with Source, Width and Height
+        /// Sets Image attributes like Source, Width and Height, ... and sets image on Canvas
         /// </summary>
-        /// <returns>
-        /// Object of Image class with needed Attributes
-        /// </returns>
-        public Image RenderImage()
+        public void RenderImage()
         {
-            if(this.Image == null)
-            {
-                this.Image = new Image();
-            }
-
+            //set image
             this.Image.Source = this.Bitmap;
             this.Image.Width = this.Size.X;
             this.Image.Height = this.Size.Y;
 
-            return this.Image;
+            //set on Canvas
+            Canvas.SetTop(this.Image ,this.Position.Y);
+            Canvas.SetLeft(this.Image ,this.Position.X);
+
+            this.ResetChildsOnCanvas();
         }
 
         public void AddChild(GameObject child)
         {
-            child.Position.Add(this.Position);
+            child.SetPosition(child.GetPosition().ReturnAdd(this.Position));
             this.Childs.Add(child);
         }
 
@@ -76,24 +88,14 @@ namespace SpaceRover.GameClasses
         /// <summary>
         /// Sets childs positon and size according to this (patent) GameObject
         /// </summary>
-        public void ResetChildsOnCanvas()
+        private void ResetChildsOnCanvas()
         {
-            var sizeDiff = this.Size.ReturnDivide(this.oldSize);
-
-            var childRow = new List<double>();
-            var childCol = new List<double>();
-
-            foreach(var child in this.Childs)
+            if(this.oldSize.IsZero())
             {
-                if(!childRow.Contains(child.Position.Y))
-                {
-                    childRow.Add(child.Position.Y);
-                }
-                if(!childCol.Contains(child.Position.X))
-                {
-                    childCol.Add(child.Position.X);
-                }
+                return;
             }
+
+            var sizeDiff = this.Size.ReturnDivide(this.oldSize);
 
             foreach (var child in this.Childs)
             {
@@ -104,20 +106,82 @@ namespace SpaceRover.GameClasses
 
                 if(child.Position.X != 0)
                 {
-                    child.Position.X = child.Position.X * sizeDiff.X;
+                    child.SetPosition(child.GetPosition().ReturnMultiplyX(sizeDiff.X));
+                    //child.Position.X = child.Position.X * sizeDiff.X;
                 }
                 if(child.Position.Y != 0)
                 {
-                    child.Position.Y = child.Position.Y * sizeDiff.Y;
+                    child.SetPosition(child.GetPosition().ReturnMultiplyY(sizeDiff.Y));
+                    //child.Position.Y = child.Position.Y * sizeDiff.Y;
                 }
 
-                child.Position.Add(this.Position);
+                child.SetPosition(child.GetPosition().ReturnAdd(this.Position));
+                //child.Position.Add(this.Position);
+
+
+                child.RenderImage();
             }
 
             this.oldPos = Vector2.Zero();
             this.oldSize = Vector2.Zero();
         }
 
+
+        //getting pos and size
+
+        /// <summary>
+        /// Gets the positon Vector2 of a GameObject
+        /// </summary>
+        /// <returns>
+        /// Vector2
+        /// </returns>
+        public Vector2 GetPosition()
+        {
+            return this.Position;
+        }
+
+        /// <summary>
+        /// Gets the size of this GameObject
+        /// </summary>
+        /// <returns>
+        /// Vector2 : size
+        /// </returns>
+        public Vector2 GetSize()
+        {
+            return this.Size;
+        }
+
+
+        //setting height, width, pos 
+
+        /// <summary>
+        /// Sets position of GameObject to a Vector2
+        /// </summary>
+        /// <param name="position">
+        /// Vector2 of new position
+        /// </param>
+        public void SetPosition(Vector2 position)
+        {
+            this.Position = position;
+        }
+
+        /// <summary>
+        /// Sets size of GameObject to a new Vector2
+        /// </summary>
+        /// <param name="size">
+        /// Vector2 of new size
+        /// </param>
+        public void SetSize(Vector2 size)
+        {
+            this.Size = size;
+        }
+
+        /// <summary>
+        /// Sets height value of this GameObject
+        /// </summary>
+        /// <param name="height">
+        /// New height
+        /// </param>
         public void SetHeight(double height)
         {
             setOldSizeY(this.Size.Y);
@@ -126,6 +190,12 @@ namespace SpaceRover.GameClasses
 
         }
 
+        /// <summary>
+        /// Sets width value of this GameObject
+        /// </summary>
+        /// <param name="width">
+        /// Value of new width
+        /// </param>
         public void SetWidth(double width)
         {
             setOldSizeX(this.Size.X);
@@ -133,6 +203,12 @@ namespace SpaceRover.GameClasses
             this.Size.X = width;
         }
 
+        /// <summary>
+        /// Sets new value for X positon
+        /// </summary>
+        /// <param name="posX">
+        /// New X position
+        /// </param>
         public void SetPosX(double posX)
         {
             setOldPosX(this.Position.X);
@@ -140,6 +216,12 @@ namespace SpaceRover.GameClasses
             this.Position.X = posX;
         }
 
+        /// <summary>
+        /// Sets new value for Y positon
+        /// </summary>
+        /// <param name="posY">
+        /// New Y position
+        /// </param>
         public void SetPosY(double posY)
         {
             setOldPosY(this.Position.Y);
@@ -147,6 +229,12 @@ namespace SpaceRover.GameClasses
             this.Position.Y = posY;
         }
 
+        /// <summary>
+        /// Sets the width relative (in percentage) to a canvas width
+        /// </summary>
+        /// <param name="canvas">The canvas</param>
+        /// <param name="widthPercentage">Percentage of new width</param>
+        /// <returns></returns>
         public double SetWidthRelativeToCanvas(Canvas canvas, double widthPercentage)
         {
             setOldSizeX(this.Size.X);
@@ -156,6 +244,13 @@ namespace SpaceRover.GameClasses
 
             return width;
         }
+
+        /// <summary>
+        /// Sets height relative (in percantage) to a canvas
+        /// </summary>
+        /// <param name="canvas">The canvas</param>
+        /// <param name="heightPercentage">Percentage of new width</param>
+        /// <returns></returns>
         public double SetHeightRelativeToCanvas(Canvas canvas, double heightPercentage)
         {
             setOldSizeY(this.Size.Y);
@@ -166,6 +261,12 @@ namespace SpaceRover.GameClasses
             return height;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="posXPercantage"></param>
+        /// <returns></returns>
         public double SetPosXRelativeToCanvas(Canvas canvas, double posXPercantage)
         {
             setOldPosX(this.Position.X);
@@ -176,6 +277,12 @@ namespace SpaceRover.GameClasses
             return posX;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="posYPercantage"></param>
+        /// <returns></returns>
         public double SetPosYRelativeToCanvas(Canvas canvas, double posYPercantage)
         {
             setOldPosY(this.Position.Y);
@@ -186,6 +293,11 @@ namespace SpaceRover.GameClasses
             return posY;
         }
 
+
+
+
+
+        //vars for rendering methods
 
         private void setOldPosX(double pos)
         {

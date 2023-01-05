@@ -59,6 +59,27 @@ namespace SpaceRover.GameClasses
             this.X = this.X * vector2.X;
             this.Y = this.Y * vector2.Y;
         }
+
+        public Vector2 ReturnAddX(double xValue)
+        {
+            return new Vector2(this.X + xValue, this.Y);
+        }
+
+        public Vector2 ReturnAddY(double yValue)
+        {
+            return new Vector2(this.X, this.Y + yValue);
+        }
+
+        public Vector2 ReturnMultiplyX(double xValue)
+        {
+            return new Vector2(this.X * xValue, this.Y);
+        }
+
+        public Vector2 ReturnMultiplyY(double yValue)
+        {
+            return new Vector2(this.X, this.Y * yValue);
+        }
+
         public Vector2 ReturnAdd(Vector2 vector2)
         {
             return new Vector2(this.X + vector2.X, this.Y + vector2.Y);

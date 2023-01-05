@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpaceRover
+namespace SpaceRover.GameClasses
 {
     internal class RessourceManager
     {
